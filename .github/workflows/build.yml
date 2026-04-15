@@ -13,11 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Debug: List files
-      shell: pwsh
-      run: |
-        Write-Host "Listing all files in the repository..."
-        Get-ChildItem -Recurse | Select-Object FullName
+    - name: Debug List Files
+      run: dir /s /b
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -25,15 +22,15 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Build and Publish
-      shell: pwsh
       run: |
-        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
-        if (-not $csproj) {
-            Write-Error "No .csproj file found in the repository!"
-            exit 1
-        }
-        Write-Host "Found project file at: $csproj"
-
+        $csproj = (Get-ChildItem -Recurse -Filter *.csproj).FullName[0]
+        if (!$csproj) { echo "Project file not found"; exit 1 }
         dotnet restore $csproj
-        dotnet build $csproj --configuration Release --no-incremental
+        dotnet build $csproj -c Release --no-incremental
         dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: GongWenSignSystem-Exe
+        path: ./publish
