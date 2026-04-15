@@ -14,7 +14,8 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Debug List Files
-      run: dir /s /b
+      shell: pwsh
+      run: Get-ChildItem -Recurse | Select-Object FullName
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -22,9 +23,14 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Build and Publish
+      shell: pwsh
       run: |
-        $csproj = (Get-ChildItem -Recurse -Filter *.csproj).FullName[0]
-        if (!$csproj) { echo "Project file not found"; exit 1 }
+        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
+        if (-not $csproj) {
+            Write-Error "Project file (.csproj) not found in the repository!"
+            exit 1
+        }
+        Write-Host "Found project file: $csproj"
         dotnet restore $csproj
         dotnet build $csproj -c Release --no-incremental
         dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish
