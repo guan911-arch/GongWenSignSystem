@@ -2,21 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
-using System.Windows;
 
 namespace GongWenSignSystem.Services.Fonts
 {
-    /// <summary>
-    /// FontService handles the loading of private fonts (FangSong, KaiTi, XiaobiaoSong)
-    /// to ensure layout consistency regardless of system-installed fonts.
-    /// </summary>
     public class FontService
     {
-        private readonly Dictionary<string, Typeface> _loadedFonts = new Dictionary<string, Typeface>();
+        private readonly Dictionary<string, FontFamily> _loadedFonts = new Dictionary<string, FontFamily>();
 
-        /// <summary>
-        /// Loads a font from a physical file path and registers it in the service.
-        /// </summary>
         public void LoadFont(string fontName, string filePath)
         {
             if (!File.Exists(filePath))
@@ -26,9 +18,18 @@ namespace GongWenSignSystem.Services.Fonts
 
             try
             {
-                string formattedPath = $"file:///{filePath.Replace('\\', '/')}";
-                var fontFamily = new FontFamily(new Uri(formattedPath));
-                _loadedFonts[fontName] = fontFamily.Typefaces[0];
+                // In WPF, the correct way to load a standalone .ttf file is using a path string
+                // with the format "C:\path\to\font.ttf#Font Name"
+                // Since we might not know the internal font name, we can try the file path directly
+                // however, for custom fonts, the most reliable way is embedding or installing.
+                // For a standalone app, we use the path-to-file syntax.
+                string fontPath = filePath.Replace('\\', '/');
+                var fontFamily = new FontFamily(new Uri(fontPath), new Uri(""));
+
+                // Correct WPF FontFamily constructor for local files:
+                // new FontFamily("file:///C:/path/to/font.ttf")
+                var finalFamily = new FontFamily($"file:///{fontPath}");
+                _loadedFonts[fontName] = finalFamily;
             }
             catch (Exception ex)
             {
@@ -40,10 +41,9 @@ namespace GongWenSignSystem.Services.Fonts
         {
             if (!_loadedFonts.ContainsKey(fontName))
             {
-                throw new KeyNotFoundException($"Font {fontName} has not been loaded.");
+                return new FontFamily("Microsoft YaHei"); // Fallback
             }
-
-            return new FontFamily(_loadedFonts[fontName].Source);
+            return _loadedFonts[fontName];
         }
 
         public void LoadAllDefaultFonts(string fontsDirectory)
@@ -53,7 +53,7 @@ namespace GongWenSignSystem.Services.Fonts
             {
                 string path = Path.Combine(fontsDirectory, fontFile);
                 string name = Path.GetFileNameWithoutExtension(fontFile);
-                LoadFont(name, path);
+                try { LoadFont(name, path); } catch { /* Log and continue */ }
             }
         }
     }

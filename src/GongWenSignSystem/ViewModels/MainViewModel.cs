@@ -92,8 +92,8 @@ namespace GongWenSignSystem.ViewModels
         // This is what the PrintPreviewer.xaml binds to
         public object PreviewVisual => ((PrintEngine)_printEngine).GetRenderedVisual();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
