@@ -1,0 +1,1 @@
+public class LayoutConfig { public string TemplateName { get; set; } public string PdfBackgroundPath { get; set; } public List<<TemplateTemplateField> Fields { get; set; } = new List<<TemplateTemplateField>(); }

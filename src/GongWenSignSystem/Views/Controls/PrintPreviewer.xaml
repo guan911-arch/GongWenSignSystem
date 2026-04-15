@@ -1,0 +1,23 @@
+<UserControl x:Class="GongWenSignSystem.Views.Controls.PrintPreviewer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="600">
+    <Grid Background="#CCCCCC">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Border Background="White"
+                    Width="794" Height="1123"
+                    Margin="20"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    Shadow="True">
+                <!-- The ContentControl will host the DrawingVisual from PrintEngine -->
+                <ContentControl x:Name="VisualHost"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top" />
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
