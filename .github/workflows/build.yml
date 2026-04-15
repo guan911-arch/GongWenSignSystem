@@ -23,12 +23,16 @@ jobs:
       run: |
         $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
         dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=false -o ./publish/win-x64
+        # Copy config folder explicitly as it's outside the src directory
+        if (Test-Path "config") { Copy-Item -Path "config" -Destination "./publish/win-x64" -Recurse -Force }
 
     - name: Build and Publish x86
       shell: pwsh
       run: |
         $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
         dotnet publish $csproj -c Release -r win-x86 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=false -o ./publish/win-x86
+        # Copy config folder explicitly as it's outside the src directory
+        if (Test-Path "config") { Copy-Item -Path "config" -Destination "./publish/win-x86" -Recurse -Force }
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
