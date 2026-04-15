@@ -13,19 +13,37 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Debug: List files
+      run: |
+        echo "Listing all files in the repository..."
+        dir /s /b
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore GongWenSignSystem.sln
+      # Use a wildcard search to find the csproj if the explicit path fails
+      run: |
+        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
+        if ($csproj) {
+            echo "Found project file at: $csproj"
+            dotnet restore $csproj
+        } else {
+            echo "No .csproj file found!"
+            exit 1
+        }
 
     - name: Build
-      run: dotnet build GongWenSignSystem.sln --configuration Release --no-incremental
+      run: |
+        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
+        dotnet build $csproj --configuration Release --no-incremental
 
     - name: Publish
-      run: dotnet publish src/GongWenSignSystem/GongWenSignSystem.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish
+      run: |
+        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
+        dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
