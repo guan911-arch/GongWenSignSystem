@@ -13,30 +13,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Debug List Files
-      shell: pwsh
-      run: Get-ChildItem -Recurse | Select-Object FullName
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
 
-    - name: Build and Publish
+    - name: Build and Publish x64
       shell: pwsh
       run: |
         $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
-        if (-not $csproj) {
-            Write-Error "Project file (.csproj) not found in the repository!"
-            exit 1
-        }
-        Write-Host "Found project file: $csproj"
-        dotnet restore $csproj
-        dotnet build $csproj -c Release --no-incremental
-        dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -o ./publish
+        dotnet publish $csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=false -o ./publish/win-x64
 
-    - name: Upload Artifact
+    - name: Build and Publish x86
+      shell: pwsh
+      run: |
+        $csproj = Get-ChildItem -Recurse -Filter *.csproj | Select-Object -ExpandProperty FullName -First 1
+        dotnet publish $csproj -c Release -r win-x86 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=false -o ./publish/win-x86
+
+    - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: GongWenSignSystem-Exe
+        name: GongWenSignSystem-AllVersions
         path: ./publish
