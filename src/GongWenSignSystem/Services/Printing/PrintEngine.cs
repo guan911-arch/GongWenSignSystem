@@ -49,8 +49,8 @@ namespace GongWenSignSystem.Services.Printing
 
             using (DrawingContext dc = _rootVisual.RenderOpen())
             {
-                // FIX: Convert FontFamily to Typeface
-                Typeface typeface = fontFamily.GetTypeface("Regular");
+                // FIX: Use Typeface constructor instead of non-existent GetTypeface method
+                Typeface typeface = new Typeface(fontFamily);
 
                 FormattedText formattedText = new FormattedText(
                     text,
