@@ -11,7 +11,7 @@
     <ApplicationId>com.gongwensign.system</ApplicationId>
     <RootNamespace>GongWenSignSystem</RootNamespace>
     <AssemblyName>GongWenSignSystem</AssemblyName>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
