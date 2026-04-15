@@ -83,8 +83,8 @@ namespace GongWenSignSystem.Services.Layout
         {
             double fontSizePx = fontSizePt * (96.0 / 72.0);
 
-            // FIX: Use Typeface constructor instead of non-existent GetTypeface method
-            Typeface typeface = new Typeface(fontFamily);
+            // ULTIMATE COMPATIBILITY FIX: Use .Source string to avoid type mismatch
+            Typeface typeface = new Typeface(fontFamily.Source);
 
             FormattedText ft = new FormattedText(
                 c.ToString(),
