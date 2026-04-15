@@ -25,23 +25,19 @@ namespace GongWenSignSystem.Views.Controls
                 var visual = vm.PreviewVisual as DrawingVisual;
                 if (visual != null)
                 {
-                    // In a real WPF implementation, we wrap the DrawingVisual in a
-                    // DrawingVisualHost or use a custom FrameworkElement to render it.
-                    // Here we simulate the hosting logic.
-                    var host = new VisualHost(visual);
+                    var host = new PrintVisualHost(visual);
                     VisualHost.Content = host;
                 }
             }
         }
 
-        private class VisualHost : FrameworkElement
+        private class PrintVisualHost : FrameworkElement
         {
             private readonly DrawingVisual _visual;
-            public VisualHost(DrawingVisual visual) => _visual = visual;
+            public PrintVisualHost(DrawingVisual visual) => _visual = visual;
 
             protected override void OnRender(DrawingContext drawingContext)
             {
-                // Render the PrintEngine's output directly to the screen
                 drawingContext.DrawDrawing(_visual.Drawing);
             }
         }
