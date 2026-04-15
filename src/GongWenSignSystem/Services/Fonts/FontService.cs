@@ -18,16 +18,8 @@ namespace GongWenSignSystem.Services.Fonts
 
             try
             {
-                // In WPF, the correct way to load a standalone .ttf file is using a path string
-                // with the format "C:\path\to\font.ttf#Font Name"
-                // Since we might not know the internal font name, we can try the file path directly
-                // however, for custom fonts, the most reliable way is embedding or installing.
-                // For a standalone app, we use the path-to-file syntax.
                 string fontPath = filePath.Replace('\\', '/');
-                var fontFamily = new FontFamily(new Uri(fontPath), new Uri(""));
-
-                // Correct WPF FontFamily constructor for local files:
-                // new FontFamily("file:///C:/path/to/font.ttf")
+                // Standard WPF local file font format: "file:///C:/path/to/font.ttf"
                 var finalFamily = new FontFamily($"file:///{fontPath}");
                 _loadedFonts[fontName] = finalFamily;
             }
@@ -41,7 +33,7 @@ namespace GongWenSignSystem.Services.Fonts
         {
             if (!_loadedFonts.ContainsKey(fontName))
             {
-                return new FontFamily("Microsoft YaHei"); // Fallback
+                return new FontFamily("Microsoft YaHei");
             }
             return _loadedFonts[fontName];
         }
@@ -53,7 +45,7 @@ namespace GongWenSignSystem.Services.Fonts
             {
                 string path = Path.Combine(fontsDirectory, fontFile);
                 string name = Path.GetFileNameWithoutExtension(fontFile);
-                try { LoadFont(name, path); } catch { /* Log and continue */ }
+                try { LoadFont(name, path); } catch { }
             }
         }
     }

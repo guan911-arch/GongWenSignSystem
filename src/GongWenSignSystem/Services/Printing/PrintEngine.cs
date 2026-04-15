@@ -38,7 +38,7 @@ namespace GongWenSignSystem.Services.Printing
                     dc.DrawImage(bitmap, new Rect(0, 0, _pageWidthPx, _pageHeightPx));
                 }
             }
-            catch { /* Log error */ }
+            catch { }
         }
 
         public void DrawText(string text, PhysicalPoint position, FontFamily fontFamily, double fontSizePt, Color color)
@@ -49,14 +49,16 @@ namespace GongWenSignSystem.Services.Printing
 
             using (DrawingContext dc = _rootVisual.RenderOpen())
             {
+                // FIX: Convert FontFamily to Typeface
+                Typeface typeface = fontFamily.GetTypeface("Regular");
+
                 FormattedText formattedText = new FormattedText(
                     text,
                     System.Globalization.CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight,
-                    fontFamily,
+                    typeface,
                     fontSizePx,
                     new SolidColorBrush(color),
-                    // Setting DPI explicitly to avoidVisualTreeHelper errors during non-UI thread calls
                     96.0);
 
                 dc.DrawText(formattedText, new Point(xPx, yPx));

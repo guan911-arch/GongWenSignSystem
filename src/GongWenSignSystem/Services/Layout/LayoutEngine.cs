@@ -43,15 +43,15 @@ namespace GongWenSignSystem.Services.Layout
 
                     while (charIndex < characters.Count)
                     {
-                        char c = characters[charIndex];
-                        double charWidthMm = MeasureCharWidth(c, fontFamily, fontSizePt);
+                        char la = characters[charIndex];
+                        double charWidthMm = MeasureCharWidth(la, fontFamily, fontSizePt);
 
                         if (currentX + segmentWidthMm + charWidthMm > LayoutConstants.PageWidthMm - LayoutConstants.MarginRightMm)
                         {
                             break;
                         }
 
-                        lineSegment += c;
+                        lineSegment += la;
                         segmentWidthMm += charWidthMm;
                         charIndex++;
                     }
@@ -82,14 +82,18 @@ namespace GongWenSignSystem.Services.Layout
         private double MeasureCharWidth(char c, FontFamily fontFamily, double fontSizePt)
         {
             double fontSizePx = fontSizePt * (96.0 / 72.0);
+
+            // FIX: Convert FontFamily to Typeface
+            Typeface typeface = fontFamily.GetTypeface("Regular");
+
             FormattedText ft = new FormattedText(
                 c.ToString(),
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                fontFamily,
+                typeface,
                 fontSizePx,
                 Brushes.Black,
-                96.0); // Standard DPI
+                96.0);
 
             return ft.Width / (96.0 / 25.4);
         }
