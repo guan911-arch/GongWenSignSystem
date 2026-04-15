@@ -11,8 +11,7 @@
                     Width="794" Height="1123"
                     Margin="20"
                     BorderBrush="Black"
-                    BorderThickness="1"
-                    Shadow="True">
+                    BorderThickness="1">
                 <!-- The ContentControl will host the DrawingVisual from PrintEngine -->
                 <ContentControl x:Name="VisualHost"
                                 HorizontalAlignment="Left"
